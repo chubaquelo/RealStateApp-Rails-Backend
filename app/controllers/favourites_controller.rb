@@ -10,24 +10,24 @@ class FavouritesController < ApplicationController
   end
 
   def show
-    @favourite = current_user.favourites.find_by_id(params[:id])
-    render json: Property.all.find_by_id(@favourite.property_id)
+    @favourite = current_user.liked_properties.all.find(params[:id])
+    render json: @favourite.as_json
     rescue
       render json: {'Error': 'Some error happened or non existing favourite id.'}.as_json
   end
 
   def create
-    if Property.all.find_by_id(property_params[:property_id]) != nil
+    if Property.all.find(property_params[:property_id])
       @liked_property = Favourite.create(user_id: current_user.id, property_id: property_params[:property_id])
     end
-    render json: {'Result': 'Property succesfully created.'}.as_json
+    render json: {'Result': 'Favourite succesfully created.'}.as_json
     rescue
-      render json: {'Error': 'Unexistent Property'}.as_json
+      render json: {'Error': 'Unexistent Property.'}.as_json
   end
 
   def destroy
-    @favourite = Favourite.all.find_by_id(params[:id])
-    @favourite.destroy
+    @favourite_entry = current_user.favourites.all.find_by(property_id: params[:id])
+    @favourite_entry.destroy
     render json: {'Result': 'Favourite deleted.'}.as_json
     rescue
       render json: {'Error': 'Some error happened or non existing favourite id.'}.as_json
