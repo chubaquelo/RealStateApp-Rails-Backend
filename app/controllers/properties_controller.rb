@@ -15,8 +15,12 @@ class PropertiesController < ApplicationController
   end
 
   def create
-    @property = Property.create(property_params)
-    render json: {'Result': 'Property succesfully created.'}.as_json
+    if current_user.is_admin
+      @property = Property.create(property_params)
+      render json: {'Result': 'Property succesfully created.'}.as_json
+    else
+      render json: {'Error': 'You must be admin to create a new property.'}.as_json
+    end
     rescue
       render json: {'Error': 'Unexistent Property'}.as_json
   end
